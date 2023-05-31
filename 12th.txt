@@ -1,0 +1,46 @@
+clear; clf;
+data = sign(randn(1, 400)); % generate 400 random bits
+Tau = 64;
+dataup = upsample(data, Tau); % generate impulse train
+
+yrz = przconv(data, Tau);
+ynrz = pnrzconv(dataup, Tau);
+ysine = psineconv(dataup, Tau);
+yrcos = prcosconv(dataup, 0.5, 4, Tau);
+
+eye1 = eyediagram(yrz, 2*Tau, Tau, Tau/2);
+title('RZ eye diagram');
+eye2 = eyediagram(ynrz, 2*Tau, Tau, Tau/2);
+title('NRZ eye diagram');
+eye3 = eyediagram(ysine, 2*Tau, Tau, Tau/2);
+title('HALF SINE eye diagram');
+eye4 = eyediagram(yrcos, 2*Tau, Tau, Tau/2);
+title('COSINE eye diagram');
+
+% przconv:-
+function y = przconv(data, T)
+    pout = [zeros(1, T/4), ones(1, T/2), zeros(1, T/4)];
+    y = conv(data, pout);
+    y = y(1:end-T+1);
+end
+
+% pnrzconv:-
+function y = pnrzconv(data, T)
+    pout = [zeros(1, T/2), ones(1, T/2)];
+    y = conv(data, pout);
+    y = y(1:end-T+1);
+end
+
+% psineconv:-
+function y = psineconv(data, T)
+    pout = sin(pi*[0:T-1]/T);
+    y = conv(data, pout);
+    y = y(1:end-T+1);
+end
+
+% prcosconv:-
+function y = prcosconv(data, rollfac, Td, T)
+    y = rcosfir(rollfac, Td*T, T, 1, 'normal');
+    y = conv(data, y);
+    y = y(2*Td*T:end-2*Td*T);
+end
