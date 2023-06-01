@@ -1,37 +1,23 @@
-% Sampling Theorem Verification
+%% clear previous data (if required)
+clc; 
+clear all; 
+close all;
+%% specifications 
+fc = 1; 
+fs1 = 100*fc; 
+fs2 = 1.2*fc; 
+fs3 = 2*fc; 
+fs4 = 10*fc;
+t1 = 0:1/fs1:10; 
+t2 = 0:1/fs2:10; 
+t3 = 0:1/fs3:10; 
+t4 = 0:1/fs4:10; % 10sec
+%% signals
+s1 = cos(2*pi*fc*t1); % original signal sampled at very high rate (100*fs)
+s2 = cos(2*pi*fc*t2); % original signal sampled at sr 2 fc (sr = ec)
+s3 = cos(2*pi*fc*t3); % original signal sampled at sr-2*re
+s4 = cos(2*pi*fc*t4); % original signal sampled at sr > 2 fc (sr = 10*fe)
 
-% Signal parameters
-f = 1000;   % Signal frequency (Hz)
-fs = 4000;  % Sampling frequency (Hz)
-
-% Time vector for continuous-time signal
-t_continuous = 0:1/fs:1/f-1/fs;
-
-% Generate continuous-time signal
-x_continuous = sin(2*pi*f*t_continuous);
-
-% Time vector for discrete-time samples
-t_discrete = 0:1/fs:1/f-1/fs;
-
-% Sample the continuous-time signal
-x_discrete = sin(2*pi*f*t_discrete);
-
-% Plot the continuous-time and discrete-time signals
-subplot(2, 1, 1);
-plot(t_continuous, x_continuous, 'b');
-title('Continuous-Time Signal');
-xlabel('Time (s)');
-ylabel('Amplitude');
-
-subplot(2, 1, 2);
-stem(t_discrete, x_discrete, 'r');
-title('Discrete-Time Samples');
-xlabel('Time (s)');
-ylabel('Amplitude');
-
-% Verify the sampling theorem
-hold on;
-stem(t_discrete, x_discrete, 'r', 'filled');
-plot(t_continuous, x_continuous, 'b--');
-legend('Samples', 'Continuous-Time Signal');
-hold off;
+subplot(311); plot(t1,s1, 'r', t2,s2, 'b*-'); title('for sb < 2*fc');
+subplot(312); plot(t1,s1, 'r', t3,s3, 'b*-'); title('for sb = 2*fc');
+subplot(313); plot(t1,s1, 'r', t4,s4, 'b*-'); title('for sb > 2*fc');
